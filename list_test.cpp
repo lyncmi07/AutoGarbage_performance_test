@@ -62,6 +62,7 @@ double fRandom()
 
 int main()
 {
+    gc::init(4096, 25);
 
     ListNode::_next_id = 0;
     _start_ptr = new ListNode();
