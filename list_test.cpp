@@ -1,5 +1,6 @@
 #include <random>
 #include "gc.h"
+#include <iostream>
 
 #define MAX_ITERATIONS 10000
 #define REMOVAL_RATE 0.46
@@ -7,7 +8,7 @@
 class ListNode;
 
 int list_size = 0;
-gc::static_ptr<ListNode> _start_ptr;
+gc::static_ptr<ListNode>* _start_ptr = nullptr;
 
 
 struct ListNode : public gc::object
@@ -41,7 +42,7 @@ struct ListNode : public gc::object
         }
         else
         {
-            _start_ptr = _fwd;
+            *_start_ptr = _fwd;
         }
 
         if (_fwd != nullptr) _fwd->_back = _back;
@@ -63,12 +64,22 @@ double fRandom()
 int main()
 {
     gc::init(4096, 25);
+    gc::static_ptr<ListNode> _local_start_ptr;
+    _start_ptr = &_local_start_ptr;
 
     ListNode::_next_id = 0;
-    _start_ptr = new ListNode();
+    *_start_ptr = new ListNode();
+    list_size++;
+
+    for (int i = 0; i < 200; i++)
+    {
+        std::cout << "list_size:" << list_size << std::endl;
+        add_node();
+    }
 
     for (int i = 0; i < MAX_ITERATIONS; i++)
     {
+        std::cout << "list_size:" << list_size << std::endl;
         if (fRandom() < REMOVAL_RATE)
         {
             add_node();
@@ -82,9 +93,10 @@ int main()
 
 void add_node()
 {
-    int position = random() * list_size;
+    int position = fRandom() * list_size;
+    std::cout << "Adding to position " << position << " of " << list_size << std::endl;
 
-    gc::static_ptr<ListNode> node =_start_ptr;
+    gc::static_ptr<ListNode> node = *_start_ptr;
 
     for(unsigned int i = 0; i < position; i++)
     {
@@ -93,17 +105,22 @@ void add_node()
 
     gc::static_ptr<ListNode> new_node = new ListNode();
     new_node->addAfter(node);
+
+    list_size++;
 }
 
 void remove_node()
 {
-    int position = random() * list_size;
+    int position = fRandom() * list_size;
+    std::cout << "Removing from position " << position << " of " << list_size << std::endl;
 
-    gc::static_ptr<ListNode> node =_start_ptr;
+    gc::static_ptr<ListNode> node = *_start_ptr;
     for(unsigned int i = 0; i < position; i++)
     {
         node = node->_fwd;
     }
 
     node->unlink();
+
+    list_size--;
 }

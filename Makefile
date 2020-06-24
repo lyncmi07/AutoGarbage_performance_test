@@ -12,3 +12,7 @@ $(TARGET): list_test.o
 
 list_test.o : list_test.cpp
 	$(CC) $(CCFLAGS) -o $@ -c $<
+
+clean:
+	rm a.out
+	rm *.o
