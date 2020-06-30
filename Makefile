@@ -1,18 +1,22 @@
 CC=g++
 LDFLAGS=-Wall
 LDLIBS=-Lgclib/lib -lgc
-CCFLAGS=-Wall -std=c++17 -Igclib/include -g
+CCFLAGS=-Wall -std=c++17 -Igclib/include -Isrc -g
+
+# CCFLAGS += -DPERFORMANCE_TIMERS
 
 TARGET=a.out
 
 all=$(TARGET)
 
-$(TARGET): list_test.o
-	$(CC) $(LDFLAGS) -o $@ $< $(LDLIBS)
+$(TARGET): obj/main.o obj/Application.o obj/ListNode.o
+	$(CC) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
-list_test.o : list_test.cpp
+obj/main.o: src/main.cpp
+	$(CC) $(CCFLAGS) -o $@ -c $<
+
+obj/%.o: src/%.cpp src/%.h
 	$(CC) $(CCFLAGS) -o $@ -c $<
 
 clean:
-	rm a.out
-	rm *.o
+	rm -f obj/*.o $(TARGET)
