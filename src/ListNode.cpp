@@ -12,8 +12,10 @@ ListNode::ListNode(gc::static_ptr<Application> app):
 void ListNode::addAfter(gc::static_ptr<ListNode> back)
 {
     _back = back;
-    _fwd = back->_fwd;
-    back->_fwd = this;
+    _fwd = _back->_fwd;
+
+    _back->_fwd = this;
+    if (_fwd != nullptr) _fwd->_back = this;
 }
 
 void ListNode::unlink()

@@ -4,8 +4,8 @@
 #include "gc.h"
 #include "Application.h"
 
-#define MAX_ITERATIONS 10000
-#define REMOVAL_RATE 0.46
+#define MAX_ITERATIONS 1000000
+#define REMOVAL_RATE 0.51
 
 double fRandom()
 {
@@ -19,21 +19,24 @@ double fRandom()
 
 int main()
 {
-    gc::init(1000000000, 25);
+    gc::init(900000, 25);
 
     gc::static_ptr<Application> application = new Application();
 
     for (int i = 0; i < 200; i++)
     {
         std::cout << "_list_size:" << application->_list_size << std::endl;
-        gc::debug();
+        // gc::debug();
         application->add_node();
     }
+
+    std::cout << "--RANDOMIZED--" << std::endl;
 
     for (int i = 0; i < MAX_ITERATIONS; i++)
     {
         std::cout << "_list_size:" << application->_list_size << std::endl;
-        gc::debug();
+        // gc::debug();
+	gc::info();
         if (fRandom() < REMOVAL_RATE)
         {
             application->add_node();
