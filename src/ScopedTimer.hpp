@@ -23,9 +23,9 @@
 // Replace letters with chosen timer names
 TIMER_GROUP(
 		AGC_PROGRAM,
-		AGC_LOOP,
-		AGC_NODE_ADD,
-		AGC_NODE_REMOVE
+		AGC_LOOP_SMALL,
+		AGC_LOOP_MEDIUM,
+		AGC_LOOP_LARGE
 )
 
 class scoped_timer

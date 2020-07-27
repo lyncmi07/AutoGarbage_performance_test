@@ -6,7 +6,11 @@
 #include "ScopedTimer.hpp"
 
 #define MAX_ITERATIONS 1000000
-#define LIST_APPROX_SIZE 2000
+#define SMALL_LIST_SIZE 2000
+#define MEDIUM_LIST_SIZE 4500
+#define LARGE_LIST_SIZE 9000
+
+void modifyList(gc::static_ptr<Application> application, const int list_size, const timer_group list_version);
 
 double fRandom()
 {
@@ -34,27 +38,44 @@ int main()
 
     std::cout << "--RANDOMIZED--" << std::endl;
 
+    //AutoGarbage Program
     {
 	scoped_timer t(timer_group::AGC_PROGRAM);
-        for (int i = 0; i < MAX_ITERATIONS; i++)
-        {
-	    scoped_timer t1(timer_group::AGC_LOOP);
-
-	    double removal_rate = (double)(application->_list_size) / (LIST_APPROX_SIZE * 2);
-
-            if (fRandom() > removal_rate)
-            {
-		scoped_timer t2(timer_group::AGC_NODE_ADD);
-                application->add_node();
-            }
-            else
-            {
-		scoped_timer t2(timer_group::AGC_NODE_REMOVE);
-                application->remove_node();
-            }
-        }
+	std::cout << "Starting small list" << std::endl;
+	modifyList(application, SMALL_LIST_SIZE, AGC_LOOP_SMALL);
+	std::cout << "GC after small list: ";
+        gc::info();
+	std::cout << "Starting medium list" << std::endl;
+	modifyList(application, MEDIUM_LIST_SIZE, AGC_LOOP_MEDIUM);
+	std::cout << "GC after medium list: ";
+        gc::info();
+	std::cout << "Starting large list" << std::endl;
+	modifyList(application, LARGE_LIST_SIZE, AGC_LOOP_LARGE);
+	std::cout << "GC after large list: ";
+        gc::info();
     }
 
     scoped_timer::print_info();
+    gc::info();
+}
+
+void modifyList(gc::static_ptr<Application> application, const int list_size, const timer_group list_version)
+{
+
+    for (int i = 0; i < MAX_ITERATIONS; i++)
+    {
+        scoped_timer t(list_version);
+
+	double removal_rate = (double)(application->_list_size) / (list_size * 2);
+
+        if (fRandom() > removal_rate)
+        {
+            application->add_node();
+        }
+        else
+        {
+            application->remove_node();
+        }
+    }
 }
 
