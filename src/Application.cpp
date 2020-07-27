@@ -12,7 +12,6 @@ Application::Application():
 void Application::add_node()
 {
     int position = fRandom() * _list_size;
-    std::cout << "Adding to position " << position << " of " << _list_size << std::endl;
     
     gc::static_ptr<ListNode> node(_start_ptr);
     
@@ -30,7 +29,6 @@ void Application::add_node()
 void Application::remove_node()
 {
     int position = fRandom() * _list_size;
-    std::cout << "Removing from position " << position << " of " << _list_size << std::endl;
     
     gc::static_ptr<ListNode> node(_start_ptr);
     for(unsigned int i = 0; i < position; i++)
