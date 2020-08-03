@@ -11,6 +11,7 @@
 #define LARGE_LIST_SIZE 9000
 
 void modifyList(gc::static_ptr<Application> application, const int list_size, const timer_group list_version);
+void runIteration(const size_t heap_size, const int retry_rate);
 
 double fRandom()
 {
@@ -24,19 +25,31 @@ double fRandom()
 
 int main()
 {
+    int heap_size_index = 3;
+    int retry_rate_index = 17;
+    for (heap_size_index = 3; heap_size_index < 10; heap_size_index++)
+    {
+	for (; retry_rate_index < 30; retry_rate_index++)
+	{
+            runIteration(heap_size_index * 1000000, retry_rate_index);
+	}
+
+	retry_rate_index = 5;
+    }
+}
+
+void runIteration(const size_t heap_size, const int retry_rate)
+{
+    std::cout << "HeapSize: " << heap_size << "; retry_rate: " << retry_rate << std::endl;
     scoped_timer::init_timers();
-    gc::init(900000, 25);
+    gc::init(heap_size, retry_rate);
 
     gc::static_ptr<Application> application = new Application();
 
     for (int i = 0; i < 200; i++)
     {
-        std::cout << "_list_size:" << application->_list_size << std::endl;
-        // gc::debug();
         application->add_node();
     }
-
-    std::cout << "--RANDOMIZED--" << std::endl;
 
     //AutoGarbage Program
     {
